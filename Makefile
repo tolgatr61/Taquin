@@ -16,6 +16,17 @@ BIN_DIR := build/bin
 SRCS := $(wildcard $(SRC_DIR:=/*.c))
 OBJS := $(SRCS:%.c=$(OBJ_DIR)/%.o)
 
+# Détection de l'environnement (Windows ou autre)
+ifdef SystemRoot
+	# Environnement Windows
+	RMDIR := rmdir /s /q
+	MKDIR := mkdir
+else
+	# Environnement autre (Unix/Linux)
+	RMDIR := rm -rf
+	MKDIR := mkdir -p
+endif
+
 # Règle par défaut
 all: $(BIN_DIR)/$(EXECUTABLE)
 
@@ -25,16 +36,17 @@ $(BIN_DIR)/$(EXECUTABLE): $(OBJS) | $(BIN_DIR)
 
 # Compiler les fichiers sources en fichiers objets
 $(OBJ_DIR)/%.o: %.c | $(OBJ_DIR)
-	@if not exist "$(dir $@)" mkdir "$(dir $@)"
+	$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Créer les répertoires obj et bin si nécessaire
 $(OBJ_DIR) $(BIN_DIR):
-	@if not exist "$@" mkdir "$@"
+	$(MKDIR) $(OBJ_DIR)
+	$(MKDIR) $(BIN_DIR)
 
 # Nettoyer les fichiers compilés
 clean:
-	if exist build rmdir /s /q build
+	$(RMDIR) build
 
 # Exécuter le programme
 run: $(BIN_DIR)/$(EXECUTABLE)
