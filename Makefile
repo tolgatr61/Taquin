@@ -8,7 +8,7 @@ CC := gcc
 CFLAGS := -Wall -Wextra -g -Isrc
 
 # Emplacements des fichiers sources, objets et exécutables
-SRC_DIR := src src/model
+SRC_DIR := src src/model src/controller/cli src/view/cli
 OBJ_DIR := build/obj
 BIN_DIR := build/bin
 
