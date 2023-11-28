@@ -5,6 +5,8 @@
 #include <time.h>
 #include <stdint.h>  // Ajout pour uint8_t, uint16_t
 
+#define MAX_SCORES 10 // Nombre maximum de scores à conserver
+
 // Structure représentant une tuile individuelle dans le puzzle de taquin.
 typedef struct {
     uint8_t row;          // Ligne où se trouve la tuile.
@@ -34,9 +36,15 @@ typedef struct {
 
 // Structure pour stocker les scores des joueurs.
 typedef struct {
-    char *player_name;  // Nom du joueur.
+    char *player_name;  // Pointeur vers le nom du joueur
     double time_taken;  // Durée écoulée pour résoudre le puzzle.
 } Score;
+
+// Structure pour gérer le classement des joueurs.
+typedef struct {
+    Score *scores[MAX_SCORES];
+} Leaderboard;
+
 
 // Déclaration des fonctions pour la gestion du puzzle de taquin.
 Taquin *createTaquin(uint8_t size);
@@ -49,13 +57,17 @@ void startTimer(Timer *timer);
 void stopTimer(Timer *timer);
 double getElapsedTime(const Timer *timer);
 
-// Déclaration des fonctions pour la gestion des scores.
-bool saveScore(const Score *score, const char *filename);
-Score *loadScores(const char *filename, size_t *num_scores);
+// Déclarations pour la gestion des scores
+Score *createScore(const char *name, double time);
+void addScore(Leaderboard *leaderboard, Score *new_score);
+void freeScore(Score *score);
+void freeScores(Leaderboard *leaderboard);
+bool saveScoresToFile(Leaderboard *leaderboard, const char *filepath);
+bool loadScoresFromFile(Leaderboard *leaderboard, const char *filepath);
+void printScores(const Leaderboard *leaderboard);
 
 // Déclaration des fonctions utilitaires.
 void freeTaquin(Taquin *taquin);
-void freeScores(Score *scores, size_t num_scores);
 
 void printTaquin(const Taquin *taquin);
 

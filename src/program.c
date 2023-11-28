@@ -2,25 +2,35 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "model/taquin.h" // Votre fichier d'en-tête
+#include "model/taquin.h"
 
 int main() {
+    const char *scoreFilePath = "save/taquinsave.txt";
+    Leaderboard leaderboard = {0};
+
+    loadScoresFromFile(&leaderboard, scoreFilePath);
+
     printf("Creation d'un taquin de taille 3x3\n");
     Taquin *taquin = createTaquin(3);
+    if (!taquin) {
+        printf("echec de l'initialisation du taquin.\n");
+        return 1;
+    }
     shuffleTaquin(taquin);
 
     Timer gameTimer;
     startTimer(&gameTimer);
 
-    double timeLimit = 120.0; // Limite de temps fixee, par exemple 120 secondes
-
+    double timeLimit = 120.0;
     bool gameRunning = true;
+    bool gameWon = false;
+
     while (gameRunning) {
         double elapsedTime = getElapsedTime(&gameTimer);
 
-        // Verifier si le temps maximal est atteint
         if (elapsedTime >= timeLimit) {
             printf("Temps ecoule ! Le jeu est termine.\n");
+            gameRunning = false;
             break;
         }
 
@@ -43,6 +53,7 @@ int main() {
                 printf("Mouvement non valide ou hors limites. Veuillez reessayer.\n");
             } else if (checkVictory(taquin)) {
                 printf("Felicitations ! Vous avez resolu le puzzle !\n");
+                gameWon = true;
                 gameRunning = false;
             }
         } else {
@@ -51,12 +62,26 @@ int main() {
     }
 
     stopTimer(&gameTimer);
-    if (checkVictory(taquin)) {
-        printf("Felicitations ! Vous avez resolu le puzzle en %.2f secondes!\n", getElapsedTime(&gameTimer));
+
+    if (gameWon) {
+        double elapsedTime = getElapsedTime(&gameTimer);
+        printf("Felicitations ! Vous avez resolu le puzzle en %.2f secondes!\n", elapsedTime);
+
+        char playerName[50];
+        printf("Entrez votre nom pour enregistrer votre score: ");
+        scanf("%49s", playerName);
+
+        Score *newScore = createScore(playerName, elapsedTime);
+        addScore(&leaderboard, newScore);
+        saveScoresToFile(&leaderboard, scoreFilePath);
     } else {
-        printf("Jeu termine. Vous n'avez pas resolu le puzzle. Temps total: %.2f secondes\n", getElapsedTime(&gameTimer));
+        printf("Jeu termine. Temps total: %.2f secondes\n", getElapsedTime(&gameTimer));
     }
 
+    printf("\nTop 10 des Scores:\n");
+    printScores(&leaderboard);
+
+    freeScores(&leaderboard);
     freeTaquin(taquin);
     return 0;
 }
