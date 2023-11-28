@@ -9,8 +9,8 @@ CFLAGS := -Wall -Wextra -g -Isrc
 
 # Emplacements des fichiers sources, objets et exécutables
 SRC_DIR := src src/model
-OBJ_DIR := build\obj
-BIN_DIR := build\bin
+OBJ_DIR := build/obj
+BIN_DIR := build/bin
 
 # Trouver les fichiers .c et .o
 SRCS := $(wildcard $(SRC_DIR:=/*.c))
