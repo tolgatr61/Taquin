@@ -6,7 +6,7 @@
 #include "model/score.h"
 
 void displayGameState(const Taquin *taquin, const Timer *gameTimer);
-bool handleUserInput(Taquin *taquin, bool *gameWon);
-void handleGameWin(const Timer *gameTimer, Leaderboard *leaderboard, const char *scoreFilePath);
+void displayLeaderboard(const Leaderboard *leaderboard);
+void displayPlayerNamePrompt();
 
 #endif // GAME_VIEW_H
